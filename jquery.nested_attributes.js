@@ -122,6 +122,7 @@
 	function applyIndexToRow ($row, index) {
 		
 		var $inputs = $row.find(':input');
+		var $labels = $row.find('label');
 		var options = $row.data('collection').data('options');
 		var collectionName = options.collectionName;
 
@@ -139,6 +140,15 @@
 				id: newID,
 				name: newName
 			});			
+			
+		});
+		
+		$labels.each(function () {
+			
+			var forRegExp = new RegExp('_' + collectionName + '_attributes_\\d+_');
+			var forReplacement = '_' + collectionName + '_attributes_' + index + '_';
+			var newFor = $(this).attr('for').replace(forRegExp, forReplacement);
+			$(this).attr('for', newFor);
 			
 		});
 		
