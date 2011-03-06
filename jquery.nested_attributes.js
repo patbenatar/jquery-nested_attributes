@@ -23,10 +23,13 @@
 		$children.each(function (i) {
 			
 			if (options.collectIdAttributes) {
-				
 				// Using the default rails helpers, ID attributes will wind up
 				// right after their propper containers in the form.
-				if ($(this)[0].nodeName == 'INPUT') $(this).appendTo($(this).prev());
+				if ($(this)[0].nodeName == 'INPUT') {
+          $(this).appendTo($(this).prev());
+          $children = $children.not($(this));
+        }
+
 			}
 			
 			var $destroyLink = $(this).find('.destroy');
@@ -47,9 +50,9 @@
 		if (options.removeOnLoadIf) {
 			
 			$children.each(function (i) {
-				
+
 				if ($(this).call(true, options.removeOnLoadIf, i)) {
-					
+
 					$(this).remove();
 					
 				}
@@ -70,6 +73,7 @@
 		bindAddTo: $('#clone-rent-period'),
 		removeOnLoadIf: false,
 		collectIdAttributes: true,
+		detectCollectionName: true,
 		beforeAdd: false,
 		afterAdd: false,
 		beforeMove: false,
@@ -153,7 +157,7 @@
 		var index = indexForRow($row);
 
 		var beforeDestroy = $collection.data('options').beforeDestroy;
-		if (beforeDestroy) $row.call(beforeDestroy, index, rowIsNew);
+		if (beforeDestroy) $row.call(beforeDestroy, index, isNew($row));
 
 		if (isNew($row)) {
 
@@ -175,7 +179,7 @@
 		}
 
 		var afterDestroy = $collection.data('options').afterDestroy;
-		if (afterDestroy) $row.call(afterDestroy, index, rowIsNew);
+		if (afterDestroy) $row.call(afterDestroy, index, isNew($row));
 
 		// Rename the remaining escalations
 		resetIndexes($collection);
