@@ -70,7 +70,7 @@
 	var settings = {
 		removeEmptyOnLoad: false,
 		collectionName: false,
-		bindAddTo: $(),
+		bindAddTo: false,
 		removeOnLoadIf: false,
 		collectIdAttributes: true,
 		detectCollectionName: true,
