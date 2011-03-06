@@ -26,9 +26,9 @@
 				// Using the default rails helpers, ID attributes will wind up
 				// right after their propper containers in the form.
 				if ($(this)[0].nodeName == 'INPUT') {
-          $(this).appendTo($(this).prev());
-          $children = $children.not($(this));
-        }
+					$(this).appendTo($(this).prev());
+					$children = $children.not($(this));
+				}
 
 			}
 			
@@ -155,11 +155,12 @@
 		var $row = $(this).data('row');
 		var $collection = $row.data('collection');
 		var index = indexForRow($row);
+		var rowIsNew = $row.find('input[name$="\\[id\\]"]').length == 0;
 
 		var beforeDestroy = $collection.data('options').beforeDestroy;
-		if (beforeDestroy) $row.call(beforeDestroy, index, isNew($row));
+		if (beforeDestroy) $row.call(beforeDestroy, index, rowIsNew);
 
-		if (isNew($row)) {
+		if (rowIsNew) {
 
 			$row.remove();
 
@@ -179,7 +180,7 @@
 		}
 
 		var afterDestroy = $collection.data('options').afterDestroy;
-		if (afterDestroy) $row.call(afterDestroy, index, isNew($row));
+		if (afterDestroy) $row.call(afterDestroy, index, rowIsNew);
 
 		// Rename the remaining escalations
 		resetIndexes($collection);
@@ -190,19 +191,12 @@
 	
 	
 	function indexForRow ($row) {
-		
+
 		var options = $row.data('collection').data('options');
 		var collectionName = options.collectionName;
 		var regExp = new RegExp('\\[' + collectionName + '_attributes\\]\\[\\d+\\]');
 		var name = $row.find(':input:first').attr('name');
 		return parseInt(name.match(regExp)[0].split('][')[1].slice(0, -1), 10);
-		
-	}
-	
-	
-	function isNew ($row) {
-
-		return $row.find('input[name$="\\[id\\]"]').length == 0;
 		
 	}
 	
