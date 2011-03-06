@@ -70,7 +70,7 @@
 	var settings = {
 		removeEmptyOnLoad: false,
 		collectionName: false,
-		bindAddTo: $('#clone-rent-period'),
+		bindAddTo: $(),
 		removeOnLoadIf: false,
 		collectIdAttributes: true,
 		detectCollectionName: true,
