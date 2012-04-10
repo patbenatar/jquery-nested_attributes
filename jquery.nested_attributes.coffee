@@ -9,11 +9,10 @@ class NestedAttributes
 
   settings:
     removeEmptyOnLoad: false
-    collectionName: false
-    bindAddTo: false
+    collectionName: false       # If not provided, we will autodetect
+    bindAddTo: false            # Required
     removeOnLoadIf: false
     collectIdAttributes: true
-    detectCollectionName: true
     beforeAdd: false
     afterAdd: false
     beforeMove: false
@@ -43,6 +42,10 @@ class NestedAttributes
 
     # Cache all the items
     @$items = @$container.children()
+
+    # If the user didn't provide a collectionName, autodetect it
+    unless @options.collectionName
+      @autodetectCollectionName()
 
     # Initialize existing items
     @$items.each (i, el) =>
@@ -77,21 +80,32 @@ class NestedAttributes
   ##                    ##
   ########################
 
+  autodetectCollectionName: ->
+    pattern = /\[(.[^\]]*)_attributes\]/
+    try
+      match = pattern.exec(@$items.first().find(':input:first').attr('name'))[1]
+      if match != null
+        @options.collectionName = match
+      else
+        throw "Regex error"
+    catch error
+      console.log "Error detecting collection name", error
+
   addClick: (event) =>
     $el = $(event.target)
 
     # Piece together an item
     $newClone = @$clone.clone(true)
     newIndex = @$container.children().length
-    @$clone = applyIndexToItem($newClone, newIndex)
+    @$clone = @applyIndexToItem($newClone, newIndex)
 
     # Give the user a chance to make their own changes before we insert
     $newClone.call(@options.beforeAdd, newIndex) if (@options.beforeAdd)
 
-    # Insert the new item
-    @$container.append($newClone)
+    # Insert the new item after the last item
+    @$items.last().after($newClone)
 
-    # Give the user a chance to make their own chances after insertion
+    # Give the user a chance to make their own changes after insertion
     $newClone.call(@options.afterAdd, newIndex) if (@options.afterAdd)
 
     # Remove this item from the items list
@@ -113,6 +127,7 @@ class NestedAttributes
     collectionName = @options.collectionName
 
     $item.find(':input').each (i, el) =>
+
       $el = $(el)
 
       idRegExp = new RegExp("_#{collectionName}_attributes_\\d+_")
@@ -129,11 +144,15 @@ class NestedAttributes
 
     $item.find('label').each (i, el) =>
       $el = $(el)
-
-      forRegExp = new RegExp("_#{collectionName}_attributes_\\d+_")
-      forReplacement = "_#{collectionName}_attributes_#{index}_"
-      newFor = $el.attr('for').replace(forRegExp, forReplacement)
-      $el.attr('for', newFor)
+      # There's a chance the programmer hasn't done labels correctly
+      # and the label has no for= attribute
+      try
+        forRegExp = new RegExp("_#{collectionName}_attributes_\\d+_")
+        forReplacement = "_#{collectionName}_attributes_#{index}_"
+        newFor = $el.attr('for').replace(forRegExp, forReplacement)
+        $el.attr('for', newFor)
+      catch error
+        console.log "Error updating label", error
 
     return $item
 
