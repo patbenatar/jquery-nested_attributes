@@ -163,7 +163,7 @@ class NestedAttributes
     $el = $(event.target)
 
     $item = $el.parentsUntil(@$container.selector).last();
-    index = indexForItem($item);
+    index = @indexForItem($item);
     itemIsNew = $item.find('input[name$="\\[id\\]"]').length == 0
 
     $item.call(@options.beforeDestroy, index, itemIsNew) if (@options.beforeDestroy)
@@ -206,11 +206,11 @@ class NestedAttributes
   # Sets the proper association indices and labels to all items
   # Used when removing items
   resetIndexes: ->
-    $items.each (i, el) =>
+    @$items.each (i, el) =>
       $el = $(el)
 
       # Make sure this is actually a new position
-      oldIndex = indexForItem($el)
+      oldIndex = @indexForItem($el)
       return true if (i == oldIndex)
 
       $el.call(@options.beforeMove, index, oldIndex) if (@options.beforeMove)
