@@ -63,9 +63,6 @@ class NestedAttributes
       # Try to find and bind the destroy link if the user wanted one
       @bindDestroy($item)
 
-    # Cache a clone
-    @$clone = @extractClone()
-
     # Remove any items on load if the client implements a check and the check passes
     if @options.removeOnLoadIf
       @$items.each (i, el) =>
@@ -92,36 +89,54 @@ class NestedAttributes
       console.log "Error detecting collection name", error
 
   addClick: (event) =>
-    $el = $(event.target)
 
+    @addItem()
+
+    # Don't let the link do anything
+    event.preventDefault()
+
+  addItem: ->
     # Piece together an item
-    $newClone = @$clone.clone(true)
-    newIndex = @$container.children().length
-    @$clone = @applyIndexToItem($newClone, newIndex)
+    newIndex = @$items.length
+    $newClone = @applyIndexToItem(@extractClone(), newIndex)
 
     # Give the user a chance to make their own changes before we insert
     $newClone.call(@options.beforeAdd, newIndex) if (@options.beforeAdd)
 
     # Insert the new item after the last item
-    @$items.last().after($newClone)
+    @$container.append($newClone)
 
     # Give the user a chance to make their own changes after insertion
     $newClone.call(@options.afterAdd, newIndex) if (@options.afterAdd)
 
-    # Remove this item from the items list
+    # Add this item to the items list
     @refreshItems()
 
-    # Don't let the link do anything
-    event.preventDefault()
-
   extractClone: ->
-    # Make a deep clone (bound events and data)
-    $record = @$items.first().clone(true)
 
-    # Empty out the values
-    $record.find(':input').val('')
+    # Are we restoring from an already created clone?
+    if @$restorableClone
 
-    return $record
+      $record = @$restorableClone
+
+      @$restorableClone = null;
+
+    else
+
+      # Make a deep clone (bound events and data)
+      $record = @$items.first().clone(true)
+
+      # Empty out the values
+      $record.find(':input').val('')
+
+      # Empty out any hidden [id] or [_destroy] fields
+      $record.find('input[name$="\\[id\\]"]').remove()
+      $record.find('input[name$="\\[_destroy\\]"]').remove()
+
+    # Make sure it's not hidden as we return.
+    # It would be hidden in the case where we're duplicating an
+    # already removed item for its template.
+    return $record.show()
 
   applyIndexToItem: ($item, index) ->
     collectionName = @options.collectionName
@@ -160,6 +175,14 @@ class NestedAttributes
   # DOM by setting _destroy to true if the record already exists. If it
   # is a new escalation, we simple delete the item
   destroyClick: (event) =>
+
+    # If you're about to delete the last one,
+    # cache a clone of it first so we have something to show
+    # the next time user hits add
+    @$restorableClone = @extractClone() unless @$items.length-1
+    # Add a blank item row if none are visible after this deletion
+    @addItem() unless @$items.filter(':visible').length-1
+
     $el = $(event.target)
 
     $item = $el.parentsUntil(@$container.selector).last();
@@ -168,7 +191,7 @@ class NestedAttributes
 
     $item.call(@options.beforeDestroy, index, itemIsNew) if (@options.beforeDestroy)
 
-    if (itemIsNew)
+    if itemIsNew
 
       $item.remove()
 
@@ -213,12 +236,12 @@ class NestedAttributes
       oldIndex = @indexForItem($el)
       return true if (i == oldIndex)
 
-      $el.call(@options.beforeMove, index, oldIndex) if (@options.beforeMove)
+      $el.call(@options.beforeMove, i, oldIndex) if (@options.beforeMove)
 
       # Change the number to the new index
-      @applyIndexToItem($el, index)
+      @applyIndexToItem($el, i)
 
-      $el.call(@options.afterMove, index, oldIndex) if (@options.afterMove)
+      $el.call(@options.afterMove, i, oldIndex) if (@options.afterMove)
 
   bindDestroy: ($item) ->
     $item.find(@options.destroySelector).click(@destroyClick) if (@options.destroySelector)

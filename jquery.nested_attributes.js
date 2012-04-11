@@ -46,7 +46,6 @@
         }
         return this.bindDestroy($item);
       }, this));
-      this.$clone = this.extractClone();
       if (this.options.removeOnLoadIf) {
         this.$items.each(__bind(function(i, el) {
           $el = $(el);
@@ -71,26 +70,34 @@
       }
     };
     NestedAttributes.prototype.addClick = function(event) {
-      var $el, $newClone, newIndex;
-      $el = $(event.target);
-      $newClone = this.$clone.clone(true);
-      newIndex = this.$container.children().length;
-      this.$clone = this.applyIndexToItem($newClone, newIndex);
+      this.addItem();
+      return event.preventDefault();
+    };
+    NestedAttributes.prototype.addItem = function() {
+      var $newClone, newIndex;
+      newIndex = this.$items.length;
+      $newClone = this.applyIndexToItem(this.extractClone(), newIndex);
       if (this.options.beforeAdd) {
         $newClone.call(this.options.beforeAdd, newIndex);
       }
-      this.$items.last().after($newClone);
+      this.$container.append($newClone);
       if (this.options.afterAdd) {
         $newClone.call(this.options.afterAdd, newIndex);
       }
-      this.refreshItems();
-      return event.preventDefault();
+      return this.refreshItems();
     };
     NestedAttributes.prototype.extractClone = function() {
       var $record;
-      $record = this.$items.first().clone(true);
-      $record.find(':input').val('');
-      return $record;
+      if (this.$restorableClone) {
+        $record = this.$restorableClone;
+        this.$restorableClone = null;
+      } else {
+        $record = this.$items.first().clone(true);
+        $record.find(':input').val('');
+        $record.find('input[name$="\\[id\\]"]').remove();
+        $record.find('input[name$="\\[_destroy\\]"]').remove();
+      }
+      return $record.show();
     };
     NestedAttributes.prototype.applyIndexToItem = function($item, index) {
       var collectionName;
@@ -125,9 +132,15 @@
     };
     NestedAttributes.prototype.destroyClick = function(event) {
       var $destroyField, $el, $item, attributePosition, destroyFieldName, index, itemIsNew, otherFieldName;
+      if (!(this.$items.length - 1)) {
+        this.$restorableClone = this.extractClone();
+      }
+      if (!(this.$items.filter(':visible').length - 1)) {
+        this.addItem();
+      }
       $el = $(event.target);
       $item = $el.parentsUntil(this.$container.selector).last();
-      index = indexForItem($item);
+      index = this.indexForItem($item);
       itemIsNew = $item.find('input[name$="\\[id\\]"]').length === 0;
       if (this.options.beforeDestroy) {
         $item.call(this.options.beforeDestroy, index, itemIsNew);
@@ -160,19 +173,19 @@
       return this.$items = this.$container.children();
     };
     NestedAttributes.prototype.resetIndexes = function() {
-      return $items.each(__bind(function(i, el) {
+      return this.$items.each(__bind(function(i, el) {
         var $el, oldIndex;
         $el = $(el);
-        oldIndex = indexForItem($el);
+        oldIndex = this.indexForItem($el);
         if (i === oldIndex) {
           return true;
         }
         if (this.options.beforeMove) {
-          $el.call(this.options.beforeMove, index, oldIndex);
+          $el.call(this.options.beforeMove, i, oldIndex);
         }
-        this.applyIndexToItem($el, index);
+        this.applyIndexToItem($el, i);
         if (this.options.afterMove) {
-          return $el.call(this.options.afterMove, index, oldIndex);
+          return $el.call(this.options.afterMove, i, oldIndex);
         }
       }, this));
     };
