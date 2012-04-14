@@ -8,19 +8,17 @@ $.fn.extend
 class NestedAttributes
 
   settings:
-    removeEmptyOnLoad: false
-    collectionName: false       # If not provided, we will autodetect
-    bindAddTo: false            # Required
-    removeOnLoadIf: false
-    collectIdAttributes: true
-    beforeAdd: false
-    afterAdd: false
-    beforeMove: false
-    afterMove: false
-    beforeDestroy: false
-    afterDestroy: false
-    autoAdd: false
-    destroySelector: '.destroy'
+    collectionName: false         # If not provided, we will attempt to autodetect. Provide this for complex collection names
+    bindAddTo: false              # Required. The single DOM element that when clicked will add another set of fields
+    removeOnLoadIf: false         # Function. It will be called for each existing item, return true to remove that item
+    collectIdAttributes: true     # Attempt to collect Rail's ID attributes
+    beforeAdd: false              # Function. Callback before adding an item
+    afterAdd: false               # Function. Callback after adding an item
+    beforeMove: false             # Function. Callback before updating indexes on an item
+    afterMove: false              # Function. Callback after updating indexes on an item
+    beforeDestroy: false          # Function. Callback before destroying an item
+    afterDestroy: false           # Function. Callback after destroying an item
+    destroySelector: '.destroy'   # Pass in a custom selector of an element in each item that will destroy that item when clicked
 
   ######################
   ##                  ##

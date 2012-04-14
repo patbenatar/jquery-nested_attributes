@@ -12,7 +12,6 @@
   });
   NestedAttributes = (function() {
     NestedAttributes.prototype.settings = {
-      removeEmptyOnLoad: false,
       collectionName: false,
       bindAddTo: false,
       removeOnLoadIf: false,
@@ -23,7 +22,6 @@
       afterMove: false,
       beforeDestroy: false,
       afterDestroy: false,
-      autoAdd: false,
       destroySelector: '.destroy'
     };
     function NestedAttributes($el, options) {

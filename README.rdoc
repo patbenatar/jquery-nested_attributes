@@ -1,3 +1,0 @@
-= jQuery Nested Attributes plugin
-
-jQuery plugin that makes it easy to dynamically add and remove records when using ActiveRecord's nested attributes.
