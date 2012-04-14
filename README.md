@@ -2,7 +2,7 @@
 
 jQuery plugin that makes it easy to dynamically add and remove records when using ActiveRecord's nested attributes.
 
-## Installing
+## Installation
 
 This will one day be a gem so it's nice and simple to install and manage updates for. Until that day, this is how you install:
 
