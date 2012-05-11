@@ -127,6 +127,8 @@ class NestedAttributes
       # Make a deep clone (bound events and data)
       $record = @$items.first().clone(@options.deepClone)
 
+      @bindDestroy($record) unless @options.deepClone
+
       # Empty out the values
       $record.find(':input').val('')
 
