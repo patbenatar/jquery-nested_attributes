@@ -21,6 +21,7 @@ class NestedAttributes
     afterDestroy: false
     autoAdd: false
     destroySelector: '.destroy'
+    deepClone: true
 
   ######################
   ##                  ##
@@ -124,7 +125,7 @@ class NestedAttributes
     else
 
       # Make a deep clone (bound events and data)
-      $record = @$items.first().clone(true)
+      $record = @$items.first().clone(@options.deepClone)
 
       # Empty out the values
       $record.find(':input').val('')
