@@ -8,17 +8,19 @@ $.fn.extend
 class NestedAttributes
 
   settings:
-    collectionName: false         # If not provided, we will attempt to autodetect. Provide this for complex collection names
-    bindAddTo: false              # Required. The single DOM element that when clicked will add another set of fields
-    removeOnLoadIf: false         # Function. It will be called for each existing item, return true to remove that item
-    collectIdAttributes: true     # Attempt to collect Rail's ID attributes
-    beforeAdd: false              # Function. Callback before adding an item
-    afterAdd: false               # Function. Callback after adding an item
-    beforeMove: false             # Function. Callback before updating indexes on an item
-    afterMove: false              # Function. Callback after updating indexes on an item
-    beforeDestroy: false          # Function. Callback before destroying an item
-    afterDestroy: false           # Function. Callback after destroying an item
-    destroySelector: '.destroy'   # Pass in a custom selector of an element in each item that will destroy that item when clicked
+    removeEmptyOnLoad: false
+    collectionName: false       # If not provided, we will autodetect
+    bindAddTo: false            # Required
+    removeOnLoadIf: false
+    collectIdAttributes: true
+    beforeAdd: false
+    afterAdd: false
+    beforeMove: false
+    afterMove: false
+    beforeDestroy: false
+    afterDestroy: false
+    autoAdd: false
+    destroySelector: '.destroy'
 
   ######################
   ##                  ##
@@ -139,7 +141,7 @@ class NestedAttributes
   applyIndexToItem: ($item, index) ->
     collectionName = @options.collectionName
 
-    $item.find(':input').each (i, el) =>
+    $item.find(':input[name]').each (i, el) =>
 
       $el = $(el)
 
@@ -199,7 +201,7 @@ class NestedAttributes
       $item.hide()
 
       # Add the _destroy field
-      otherFieldName = $item.find(':input:first').attr('name');
+      otherFieldName = $item.find(':input[name]:first').attr('name');
       attributePosition = otherFieldName.lastIndexOf('[');
       destroyFieldName = "#{otherFieldName.substring(0, attributePosition)}[_destroy]"
       $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
@@ -218,7 +220,7 @@ class NestedAttributes
 
   indexForItem: ($item) ->
     regExp = new RegExp("\\[#{@options.collectionName}_attributes\\]\\[\\d+\\]")
-    name = $item.find(':input:first').attr('name')
+    name = $item.find(':input[name]:first').attr('name')
     return parseInt(name.match(regExp)[0].split('][')[1].slice(0, -1), 10)
 
   refreshItems: ->
