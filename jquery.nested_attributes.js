@@ -12,6 +12,7 @@
   });
   NestedAttributes = (function() {
     NestedAttributes.prototype.settings = {
+      removeEmptyOnLoad: false,
       collectionName: false,
       bindAddTo: false,
       removeOnLoadIf: false,
@@ -22,7 +23,9 @@
       afterMove: false,
       beforeDestroy: false,
       afterDestroy: false,
-      destroySelector: '.destroy'
+      autoAdd: false,
+      destroySelector: '.destroy',
+      deepClone: true
     };
     function NestedAttributes($el, options) {
       this.destroyClick = __bind(this.destroyClick, this);
@@ -57,7 +60,7 @@
       var match, pattern;
       pattern = /\[(.[^\]]*)_attributes\]/;
       try {
-        match = pattern.exec(this.$items.first().find(':input:first').attr('name'))[1];
+        match = pattern.exec(this.$items.first().find(':input[name]:first').attr('name'))[1];
         if (match !== null) {
           return this.options.collectionName = match;
         } else {
@@ -76,11 +79,11 @@
       newIndex = this.$items.length;
       $newClone = this.applyIndexToItem(this.extractClone(), newIndex);
       if (this.options.beforeAdd) {
-        $newClone.call(this.options.beforeAdd, newIndex);
+        this.options.beforeAdd.call(void 0, $newClone, newIndex);
       }
       this.$container.append($newClone);
       if (this.options.afterAdd) {
-        $newClone.call(this.options.afterAdd, newIndex);
+        this.options.afterAdd.call(void 0, $newClone, newIndex);
       }
       return this.refreshItems();
     };
@@ -90,8 +93,12 @@
         $record = this.$restorableClone;
         this.$restorableClone = null;
       } else {
-        $record = this.$items.first().clone(true);
+        $record = this.$items.first().clone(this.options.deepClone);
+        if (!this.options.deepClone) {
+          this.bindDestroy($record);
+        }
         $record.find(':input').val('');
+        $record.find(':checkbox, :radio').attr("checked", false);
         $record.find('input[name$="\\[id\\]"]').remove();
         $record.find('input[name$="\\[_destroy\\]"]').remove();
       }
@@ -100,7 +107,7 @@
     NestedAttributes.prototype.applyIndexToItem = function($item, index) {
       var collectionName;
       collectionName = this.options.collectionName;
-      $item.find(':input').each(__bind(function(i, el) {
+      $item.find(':input[name]').each(__bind(function(i, el) {
         var $el, idRegExp, idReplacement, nameRegExp, nameReplacement, newID, newName;
         $el = $(el);
         idRegExp = new RegExp("_" + collectionName + "_attributes_\\d+_");
@@ -114,7 +121,7 @@
           name: newName
         });
       }, this));
-      $item.find('label').each(__bind(function(i, el) {
+      $item.find('label[for]').each(__bind(function(i, el) {
         var $el, forRegExp, forReplacement, newFor;
         $el = $(el);
         try {
@@ -141,13 +148,13 @@
       index = this.indexForItem($item);
       itemIsNew = $item.find('input[name$="\\[id\\]"]').length === 0;
       if (this.options.beforeDestroy) {
-        $item.call(this.options.beforeDestroy, index, itemIsNew);
+        this.options.beforeDestroy.call(void 0, $item, index, itemIsNew);
       }
       if (itemIsNew) {
         $item.remove();
       } else {
         $item.hide();
-        otherFieldName = $item.find(':input:first').attr('name');
+        otherFieldName = $item.find(':input[name]:first').attr('name');
         attributePosition = otherFieldName.lastIndexOf('[');
         destroyFieldName = "" + (otherFieldName.substring(0, attributePosition)) + "[_destroy]";
         $destroyField = $("<input type=\"hidden\" name=\"" + destroyFieldName + "\" />");
@@ -155,7 +162,7 @@
         $destroyField.val(true).change();
       }
       if (this.options.afterDestroy) {
-        $item.call(this.options.afterDestroy, index, itemIsNew);
+        this.options.afterDestroy.call($item, index, itemIsNew);
       }
       this.refreshItems();
       this.resetIndexes();
@@ -164,7 +171,7 @@
     NestedAttributes.prototype.indexForItem = function($item) {
       var name, regExp;
       regExp = new RegExp("\\[" + this.options.collectionName + "_attributes\\]\\[\\d+\\]");
-      name = $item.find(':input:first').attr('name');
+      name = $item.find(':input[name]:first').attr('name');
       return parseInt(name.match(regExp)[0].split('][')[1].slice(0, -1), 10);
     };
     NestedAttributes.prototype.refreshItems = function() {
@@ -179,11 +186,11 @@
           return true;
         }
         if (this.options.beforeMove) {
-          $el.call(this.options.beforeMove, i, oldIndex);
+          this.options.beforeMove.call($el, i, oldIndex);
         }
         this.applyIndexToItem($el, i);
         if (this.options.afterMove) {
-          return $el.call(this.options.afterMove, i, oldIndex);
+          return this.options.afterMove.call($el, i, oldIndex);
         }
       }, this));
     };

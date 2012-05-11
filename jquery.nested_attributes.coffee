@@ -163,10 +163,8 @@ class NestedAttributes
         id: newID
         name: newName
 
-    $item.find('label').each (i, el) =>
+    $item.find('label[for]').each (i, el) =>
       $el = $(el)
-      # There's a chance the programmer hasn't done labels correctly
-      # and the label has no for= attribute
       try
         forRegExp = new RegExp("_#{collectionName}_attributes_\\d+_")
         forReplacement = "_#{collectionName}_attributes_#{index}_"
