@@ -101,13 +101,13 @@ class NestedAttributes
     $newClone = @applyIndexToItem(@extractClone(), newIndex)
 
     # Give the user a chance to make their own changes before we insert
-    $newClone.call(@options.beforeAdd, newIndex) if (@options.beforeAdd)
+    @options.beforeAdd.call(undefined, $newClone, newIndex) if (@options.beforeAdd)
 
     # Insert the new item after the last item
     @$container.append($newClone)
 
     # Give the user a chance to make their own changes after insertion
-    $newClone.call(@options.afterAdd, newIndex) if (@options.afterAdd)
+    @options.afterAdd.call(undefined, $newClone, newIndex) if (@options.afterAdd)
 
     # Add this item to the items list
     @refreshItems()
@@ -189,7 +189,7 @@ class NestedAttributes
     index = @indexForItem($item);
     itemIsNew = $item.find('input[name$="\\[id\\]"]').length == 0
 
-    $item.call(@options.beforeDestroy, index, itemIsNew) if (@options.beforeDestroy)
+    @options.beforeDestroy.call(undefined, $item, index, itemIsNew) if (@options.beforeDestroy)
 
     if itemIsNew
 
@@ -208,7 +208,7 @@ class NestedAttributes
       $item.append($destroyField)
       $destroyField.val(true).change()
 
-    $item.call(@options.afterDestroy, index, itemIsNew) if (@options.afterDestroy)
+    @options.afterDestroy.call($item, index, itemIsNew) if (@options.afterDestroy)
 
     # Remove this item from the items list
     @refreshItems()
@@ -236,12 +236,12 @@ class NestedAttributes
       oldIndex = @indexForItem($el)
       return true if (i == oldIndex)
 
-      $el.call(@options.beforeMove, i, oldIndex) if (@options.beforeMove)
+      @options.beforeMove.call($el, i, oldIndex) if (@options.beforeMove)
 
       # Change the number to the new index
       @applyIndexToItem($el, i)
 
-      $el.call(@options.afterMove, i, oldIndex) if (@options.afterMove)
+      @options.afterMove.call($el, i, oldIndex) if (@options.afterMove)
 
   bindDestroy: ($item) ->
     $item.find(@options.destroySelector).click(@destroyClick) if (@options.destroySelector)
