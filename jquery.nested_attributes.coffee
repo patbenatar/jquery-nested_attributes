@@ -78,7 +78,7 @@ class NestedAttributes
   autodetectCollectionName: ->
     pattern = /\[(.[^\]]*)_attributes\]/
     try
-      match = pattern.exec(@$items.first().find(':input:first').attr('name'))[1]
+      match = pattern.exec(@$items.first().find(':input[name]:first').attr('name'))[1]
       if match != null
         @options.collectionName = match
       else
