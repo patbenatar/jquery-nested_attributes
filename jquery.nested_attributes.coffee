@@ -130,6 +130,9 @@ class NestedAttributes
       # Empty out the values
       $record.find(':input').val('')
 
+      # Reset checkboxes and radios
+      $record.find(':checkbox, :radio').attr("checked", false)
+
       # Empty out any hidden [id] or [_destroy] fields
       $record.find('input[name$="\\[id\\]"]').remove()
       $record.find('input[name$="\\[_destroy\\]"]').remove()
