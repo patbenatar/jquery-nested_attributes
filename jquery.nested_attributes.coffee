@@ -156,7 +156,7 @@ class NestedAttributes
       nameRegExp = new RegExp("\\[#{collectionName}_attributes\\]\\[\\d+\\]")
       nameReplacement = "[#{collectionName}_attributes][#{index}]"
 
-      newID = $el.attr('id').replace(idRegExp, idReplacement)
+      newID = $el.attr('id').replace(idRegExp, idReplacement) if $el.attr('id')
       newName = $el.attr('name').replace(nameRegExp, nameReplacement)
 
       $el.attr

@@ -114,7 +114,9 @@
         idReplacement = "_" + collectionName + "_attributes_" + index + "_";
         nameRegExp = new RegExp("\\[" + collectionName + "_attributes\\]\\[\\d+\\]");
         nameReplacement = "[" + collectionName + "_attributes][" + index + "]";
-        newID = $el.attr('id').replace(idRegExp, idReplacement);
+        if ($el.attr('id')) {
+          newID = $el.attr('id').replace(idRegExp, idReplacement);
+        }
         newName = $el.attr('name').replace(nameRegExp, nameReplacement);
         return $el.attr({
           id: newID,
