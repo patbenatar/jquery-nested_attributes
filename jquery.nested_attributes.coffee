@@ -129,8 +129,8 @@ class NestedAttributes
 
       @bindDestroy($record) unless @options.deepClone
 
-      # Empty out the values
-      $record.find(':input').val('')
+      # Empty out the values of text inputs and selects
+      $record.find(':text, select').val('')
 
       # Reset checkboxes and radios
       $record.find(':checkbox, :radio').attr("checked", false)
