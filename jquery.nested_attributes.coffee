@@ -27,7 +27,6 @@ $.fn.nestedAttributes = (method) ->
 class NestedAttributes
 
   settings:
-    removeEmptyOnLoad: false
     collectionName: false       # If not provided, we will autodetect
     bindAddTo: false            # Required
     removeOnLoadIf: false
@@ -38,7 +37,6 @@ class NestedAttributes
     afterMove: false
     beforeDestroy: false
     afterDestroy: false
-    autoAdd: false
     destroySelector: '.destroy'
     deepClone: true
 
