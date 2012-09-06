@@ -19,7 +19,7 @@ methods =
 $.fn.nestedAttributes = (method) ->
   if methods[method]?
     return methods[method].apply @, Array.prototype.slice.call(arguments, 1)
-  else if typeof method === 'object' || !method
+  else if typeof method == 'object' || !method
     return methods.init.apply(@, arguments)
   else
     $.error("Method #{method} does not exist on jQuery.nestedAttributes")
