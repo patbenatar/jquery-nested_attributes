@@ -63,7 +63,7 @@ $("#container").nestedAttributes({
 
 ### Adding an item
 
-Should you need to add an item programatically (rather than when the user clicks
+Should you need to add an item programmatically (rather than when the user clicks
 the bindAddTo element), jquery.nestedAttributes exposes an add method for this.
 
 ```javascript
