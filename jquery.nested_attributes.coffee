@@ -1,9 +1,28 @@
 $ = jQuery
 
-$.fn.extend
-  nestedAttributes: (options) ->
-    throw "Can't initialize more than one item at a time" if $(@).length > 1
-    return new NestedAttributes($(@), options)
+methods =
+  init: (options) ->
+    $el = $(@)
+    throw "Can't initialize more than one item at a time" if $el.length > 1
+    if $el.data("nestedAttributes")
+      throw "Can't initialize on this element more than once"
+    instance = new NestedAttributes($el, options)
+    $el.data("nestedAttributes", instance)
+    return $el
+  add: ->
+    $el = $(@)
+    unless $el.data("nestedAttributes")?
+      throw "You are trying to call instance methods without initializing first"
+    $el.data("nestedAttributes").addItem()
+    return $el
+
+$.fn.nestedAttributes = (method) ->
+  if methods[method]?
+    return methods[method].apply @, Array.prototype.slice.call(arguments, 1)
+  else if typeof method === 'object' || !method
+    return methods.init.apply(@, arguments)
+  else
+    $.error("Method #{method} does not exist on jQuery.nestedAttributes")
 
 class NestedAttributes
 
