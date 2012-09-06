@@ -55,7 +55,7 @@ $("#container").nestedAttributes({
   beforeDestroy: false,          // Function. Callback before destroying an item
   afterDestroy: false,           // Function. Callback after destroying an item
   destroySelector: '.destroy',   // Pass in a custom selector of an element in each item that will destroy that item when clicked
-  deepClone: true,               // Do you want jQuery to deep clone the element? Deep clones preserve events. Undesirable when using BackBone views for each element.
+  deepClone: true                // Do you want jQuery to deep clone the element? Deep clones preserve events. Undesirable when using BackBone views for each element.
 }
 ```
 
