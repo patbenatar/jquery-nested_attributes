@@ -45,7 +45,7 @@ $("#container").nestedAttributes({
 ```javascript
 {
   collectionName: false,         // If not provided, we will attempt to autodetect. Provide this for complex collection names
-  bindAddTo: false,              // Required. The single DOM element that when clicked will add another set of fields
+  bindAddTo: false,              // Required unless you are implementing your own add handler (see API below). The single DOM element that when clicked will add another set of fields
   removeOnLoadIf: false,         // Function. It will be called for each existing item, return true to remove that item
   collectIdAttributes: true,     // Attempt to collect Rail's ID attributes
   beforeAdd: false,              // Function. Callback before adding an item
