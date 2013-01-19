@@ -9,11 +9,11 @@ methods =
     instance = new NestedAttributes($el, options)
     $el.data("nestedAttributes", instance)
     return $el
-  add: ->
+  add: (callback=null) ->
     $el = $(@)
     unless $el.data("nestedAttributes")?
       throw "You are trying to call instance methods without initializing first"
-    $el.data("nestedAttributes").addItem()
+    $el.data("nestedAttributes").addItem(callback)
     return $el
 
 $.fn.nestedAttributes = (method) ->
@@ -113,7 +113,7 @@ class NestedAttributes
     # Don't let the link do anything
     event.preventDefault()
 
-  addItem: ->
+  addItem: (callback=null) ->
     # Piece together an item
     newIndex = @$items.length
     $newClone = @applyIndexToItem(@extractClone(), newIndex)
@@ -129,6 +129,8 @@ class NestedAttributes
 
     # Add this item to the items list
     @refreshItems()
+
+    callback($newClone) if callback
 
   extractClone: ->
 

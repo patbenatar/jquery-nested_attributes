@@ -66,6 +66,9 @@ $("#container").nestedAttributes({
 Should you need to add an item programmatically (rather than when the user clicks
 the bindAddTo element), jquery.nestedAttributes exposes an add method for this.
 
+Optionally pass a callback as the second parameter for easy access to the
+newly added element after its been inserted into the DOM.
+
 ```javascript
-$('#container').nestedAttributes("add");
+$('#container').nestedAttributes("add" [, callback($element)]);
 ```
