@@ -1,3 +1,6 @@
+# Author: Nick Giancola (@patbenatar)
+# Homepage: https://github.com/patbenatar/jquery-nested_attributes
+
 $ = jQuery
 
 methods =
@@ -9,11 +12,11 @@ methods =
     instance = new NestedAttributes($el, options)
     $el.data("nestedAttributes", instance)
     return $el
-  add: (callback=null) ->
+  add: ->
     $el = $(@)
     unless $el.data("nestedAttributes")?
       throw "You are trying to call instance methods without initializing first"
-    $el.data("nestedAttributes").addItem(callback)
+    $el.data("nestedAttributes").addItem()
     return $el
 
 $.fn.nestedAttributes = (method) ->
@@ -25,6 +28,8 @@ $.fn.nestedAttributes = (method) ->
     $.error("Method #{method} does not exist on jQuery.nestedAttributes")
 
 class NestedAttributes
+
+  RELEVANT_INPUTS_SELECTOR: ":input[name!=\"\"]"
 
   settings:
     collectionName: false       # If not provided, we will autodetect
@@ -98,7 +103,7 @@ class NestedAttributes
   autodetectCollectionName: ->
     pattern = /\[(.[^\]]*)_attributes\]/
     try
-      match = pattern.exec(@$items.first().find(':input[name]:first').attr('name'))[1]
+      match = pattern.exec(@$items.first().find("#{@RELEVANT_INPUTS_SELECTOR}:first").attr('name'))[1]
       if match != null
         @options.collectionName = match
       else
@@ -113,7 +118,7 @@ class NestedAttributes
     # Don't let the link do anything
     event.preventDefault()
 
-  addItem: (callback=null) ->
+  addItem: ->
     # Piece together an item
     newIndex = @$items.length
     $newClone = @applyIndexToItem(@extractClone(), newIndex)
@@ -129,8 +134,6 @@ class NestedAttributes
 
     # Add this item to the items list
     @refreshItems()
-
-    callback($newClone) if callback
 
   extractClone: ->
 
@@ -166,7 +169,7 @@ class NestedAttributes
   applyIndexToItem: ($item, index) ->
     collectionName = @options.collectionName
 
-    $item.find(':input[name]').each (i, el) =>
+    $item.find(@RELEVANT_INPUTS_SELECTOR).each (i, el) =>
 
       $el = $(el)
 
@@ -224,7 +227,7 @@ class NestedAttributes
       $item.hide()
 
       # Add the _destroy field
-      otherFieldName = $item.find(':input[name]:first').attr('name');
+      otherFieldName = $item.find("#{@RELEVANT_INPUTS_SELECTOR}:first").attr('name');
       attributePosition = otherFieldName.lastIndexOf('[');
       destroyFieldName = "#{otherFieldName.substring(0, attributePosition)}[_destroy]"
       $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
@@ -243,7 +246,7 @@ class NestedAttributes
 
   indexForItem: ($item) ->
     regExp = new RegExp("\\[#{@options.collectionName}_attributes\\]\\[\\d+\\]")
-    name = $item.find(':input[name]:first').attr('name')
+    name = $item.find("#{@RELEVANT_INPUTS_SELECTOR}:first").attr('name')
     return parseInt(name.match(regExp)[0].split('][')[1].slice(0, -1), 10)
 
   refreshItems: ->

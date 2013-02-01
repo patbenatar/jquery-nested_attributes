@@ -19,16 +19,13 @@
       $el.data("nestedAttributes", instance);
       return $el;
     },
-    add: function(callback) {
+    add: function() {
       var $el;
-      if (callback == null) {
-        callback = null;
-      }
       $el = $(this);
       if ($el.data("nestedAttributes") == null) {
         throw "You are trying to call instance methods without initializing first";
       }
-      $el.data("nestedAttributes").addItem(callback);
+      $el.data("nestedAttributes").addItem();
       return $el;
     }
   };
@@ -44,6 +41,8 @@
   };
 
   NestedAttributes = (function() {
+
+    NestedAttributes.prototype.RELEVANT_INPUTS_SELECTOR = ":input[name!=\"\"]";
 
     NestedAttributes.prototype.settings = {
       collectionName: false,
@@ -98,7 +97,7 @@
       var match, pattern;
       pattern = /\[(.[^\]]*)_attributes\]/;
       try {
-        match = pattern.exec(this.$items.first().find(':input[name]:first').attr('name'))[1];
+        match = pattern.exec(this.$items.first().find("" + this.RELEVANT_INPUTS_SELECTOR + ":first").attr('name'))[1];
         if (match !== null) {
           return this.options.collectionName = match;
         } else {
@@ -114,11 +113,8 @@
       return event.preventDefault();
     };
 
-    NestedAttributes.prototype.addItem = function(callback) {
+    NestedAttributes.prototype.addItem = function() {
       var $newClone, newIndex;
-      if (callback == null) {
-        callback = null;
-      }
       newIndex = this.$items.length;
       $newClone = this.applyIndexToItem(this.extractClone(), newIndex);
       if (this.options.beforeAdd) {
@@ -128,10 +124,7 @@
       if (this.options.afterAdd) {
         this.options.afterAdd.call(void 0, $newClone, newIndex);
       }
-      this.refreshItems();
-      if (callback) {
-        return callback($newClone);
-      }
+      return this.refreshItems();
     };
 
     NestedAttributes.prototype.extractClone = function() {
@@ -156,7 +149,7 @@
       var collectionName,
         _this = this;
       collectionName = this.options.collectionName;
-      $item.find(':input[name]').each(function(i, el) {
+      $item.find(this.RELEVANT_INPUTS_SELECTOR).each(function(i, el) {
         var $el, idRegExp, idReplacement, nameRegExp, nameReplacement, newID, newName;
         $el = $(el);
         idRegExp = new RegExp("_" + collectionName + "_attributes_\\d+_");
@@ -206,7 +199,7 @@
         $item.remove();
       } else {
         $item.hide();
-        otherFieldName = $item.find(':input[name]:first').attr('name');
+        otherFieldName = $item.find("" + this.RELEVANT_INPUTS_SELECTOR + ":first").attr('name');
         attributePosition = otherFieldName.lastIndexOf('[');
         destroyFieldName = "" + (otherFieldName.substring(0, attributePosition)) + "[_destroy]";
         $destroyField = $("<input type=\"hidden\" name=\"" + destroyFieldName + "\" />");
@@ -224,7 +217,7 @@
     NestedAttributes.prototype.indexForItem = function($item) {
       var name, regExp;
       regExp = new RegExp("\\[" + this.options.collectionName + "_attributes\\]\\[\\d+\\]");
-      name = $item.find(':input[name]:first').attr('name');
+      name = $item.find("" + this.RELEVANT_INPUTS_SELECTOR + ":first").attr('name');
       return parseInt(name.match(regExp)[0].split('][')[1].slice(0, -1), 10);
     };
 
