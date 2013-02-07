@@ -42,7 +42,7 @@
 
   NestedAttributes = (function() {
 
-    NestedAttributes.prototype.RELEVANT_INPUTS_SELECTOR = ":input[name!=\"\"]";
+    NestedAttributes.prototype.RELEVANT_INPUTS_SELECTOR = ":input[name][name!=\"\"]";
 
     NestedAttributes.prototype.settings = {
       collectionName: false,

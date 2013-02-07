@@ -29,7 +29,7 @@ $.fn.nestedAttributes = (method) ->
 
 class NestedAttributes
 
-  RELEVANT_INPUTS_SELECTOR: ":input[name!=\"\"]"
+  RELEVANT_INPUTS_SELECTOR: ":input[name][name!=\"\"]"
 
   settings:
     collectionName: false       # If not provided, we will autodetect
