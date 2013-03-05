@@ -1,6 +1,5 @@
 # Author: Nick Giancola (@patbenatar)
 # Homepage: https://github.com/patbenatar/jquery-nested_attributes
-
 $ = jQuery
 
 methods =
@@ -44,6 +43,7 @@ class NestedAttributes
     afterDestroy: false
     destroySelector: '.destroy'
     deepClone: true
+    $clone: null
 
   ######################
   ##                  ##
@@ -142,14 +142,15 @@ class NestedAttributes
 
       $record = @$restorableClone
 
-      @$restorableClone = null;
+      @$restorableClone = null
 
     else
+      $record = @options.$clone || @$items.first()
 
       # Make a deep clone (bound events and data)
-      $record = @$items.first().clone(@options.deepClone)
+      $record = $record.clone(@options.deepClone)
 
-      @bindDestroy($record) unless @options.deepClone
+      @bindDestroy($record) if @options.$clone or @options.deepClone
 
       # Empty out the values of text inputs and selects
       $record.find(':text, select').val('')
@@ -211,8 +212,8 @@ class NestedAttributes
 
     $el = $(event.target)
 
-    $item = $el.parentsUntil(@$container.selector).last();
-    index = @indexForItem($item);
+    $item = $el.parentsUntil(@$container.selector).last()
+    index = @indexForItem($item)
     itemIsNew = $item.find('input[name$="\\[id\\]"]').length == 0
 
     @options.beforeDestroy.call(undefined, $item, index, itemIsNew) if (@options.beforeDestroy)
@@ -227,8 +228,8 @@ class NestedAttributes
       $item.hide()
 
       # Add the _destroy field
-      otherFieldName = $item.find("#{@RELEVANT_INPUTS_SELECTOR}:first").attr('name');
-      attributePosition = otherFieldName.lastIndexOf('[');
+      otherFieldName = $item.find(':input[name]:first').attr('name')
+      attributePosition = otherFieldName.lastIndexOf('[')
       destroyFieldName = "#{otherFieldName.substring(0, attributePosition)}[_destroy]"
       $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
       $item.append($destroyField)
