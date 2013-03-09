@@ -56,7 +56,8 @@
       beforeDestroy: false,
       afterDestroy: false,
       destroySelector: '.destroy',
-      deepClone: true
+      deepClone: true,
+      $clone: null
     };
 
     function NestedAttributes($el, options) {
@@ -133,8 +134,9 @@
         $record = this.$restorableClone;
         this.$restorableClone = null;
       } else {
-        $record = this.$items.first().clone(this.options.deepClone);
-        if (!this.options.deepClone) {
+        $record = this.options.$clone || this.$items.first();
+        $record = $record.clone(this.options.deepClone);
+        if (this.options.$clone || this.options.deepClone) {
           this.bindDestroy($record);
         }
         $record.find(':text, select').val('');
@@ -199,7 +201,7 @@
         $item.remove();
       } else {
         $item.hide();
-        otherFieldName = $item.find("" + this.RELEVANT_INPUTS_SELECTOR + ":first").attr('name');
+        otherFieldName = $item.find(':input[name]:first').attr('name');
         attributePosition = otherFieldName.lastIndexOf('[');
         destroyFieldName = "" + (otherFieldName.substring(0, attributePosition)) + "[_destroy]";
         $destroyField = $("<input type=\"hidden\" name=\"" + destroyFieldName + "\" />");
