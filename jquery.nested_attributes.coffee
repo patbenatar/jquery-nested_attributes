@@ -150,7 +150,7 @@ class NestedAttributes
       # Make a deep clone (bound events and data)
       $record = $record.clone(@options.deepClone)
 
-      @bindDestroy($record) if @options.$clone or @options.deepClone
+      @bindDestroy($record) if @options.$clone or !@options.deepClone
 
       # Empty out the values of text inputs and selects
       $record.find(':text, select').val('')

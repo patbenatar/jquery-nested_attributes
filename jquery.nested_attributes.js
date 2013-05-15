@@ -136,7 +136,7 @@
       } else {
         $record = this.options.$clone || this.$items.first();
         $record = $record.clone(this.options.deepClone);
-        if (this.options.$clone || this.options.deepClone) {
+        if (this.options.$clone || !this.options.deepClone) {
           this.bindDestroy($record);
         }
         $record.find(':text, select').val('');
