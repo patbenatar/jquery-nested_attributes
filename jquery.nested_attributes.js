@@ -146,7 +146,7 @@
         if (this.options.$clone || !this.options.deepClone) {
           this.bindDestroy($record);
         }
-        $record.find(':text, select').val('');
+        $record.find(':text, textarea, select').val('');
         $record.find(':checkbox, :radio').attr("checked", false);
         $record.find('input[name$="\\[id\\]"]').remove();
         $record.find('input[name$="\\[_destroy\\]"]').remove();
