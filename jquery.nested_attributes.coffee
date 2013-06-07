@@ -82,9 +82,12 @@ class NestedAttributes
         $item.appendTo($item.prev())
         # Remove it from the $items collection
         @$items = @$items.not($item)
+      else
+        # Try to find and bind the destroy link if the user wanted one
+        @bindDestroy($item)
 
-      # Try to find and bind the destroy link if the user wanted one
-      @bindDestroy($item)
+    # Now that we've collected ID attributes
+    @hideIfAlreadyDestroyed $(item) for item in @$items
 
     # Remove any items on load if the client implements a check and the check passes
     if @options.removeOnLoadIf
@@ -198,11 +201,19 @@ class NestedAttributes
 
     return $item
 
+  hideIfAlreadyDestroyed: ($item) ->
+    $destroyField = $item.find("[name$='[_destroy]']")
+    if $destroyField.length && $destroyField.val() == "true"
+      @destroy $item
+
   # Hides a item from the user and marks it for deletion in the
   # DOM by setting _destroy to true if the record already exists. If it
   # is a new escalation, we simple delete the item
   destroyClick: (event) =>
+    event.preventDefault()
+    @destroy $(event.target).parentsUntil(@$container.selector).last()
 
+  destroy: ($item) ->
     # If you're about to delete the last one,
     # cache a clone of it first so we have something to show
     # the next time user hits add
@@ -210,9 +221,6 @@ class NestedAttributes
     # Add a blank item row if none are visible after this deletion
     @addItem() unless @$items.filter(':visible').length-1
 
-    $el = $(event.target)
-
-    $item = $el.parentsUntil(@$container.selector).last()
     index = @indexForItem($item)
     itemIsNew = $item.find('input[name$="\\[id\\]"]').length == 0
 
@@ -228,6 +236,7 @@ class NestedAttributes
       $item.hide()
 
       # Add the _destroy field
+      # TODO: Only add if doesn't already exist
       otherFieldName = $item.find(':input[name]:first').attr('name')
       attributePosition = otherFieldName.lastIndexOf('[')
       destroyFieldName = "#{otherFieldName.substring(0, attributePosition)}[_destroy]"
@@ -242,8 +251,6 @@ class NestedAttributes
 
     # Rename the remaining items
     @resetIndexes()
-
-    event.preventDefault()
 
   indexForItem: ($item) ->
     regExp = new RegExp("\\[#{@options.collectionName}_attributes\\]\\[\\d+\\]")

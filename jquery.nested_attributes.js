@@ -65,7 +65,8 @@
 
       this.addClick = __bind(this.addClick, this);
 
-      var _this = this;
+      var item, _i, _len, _ref,
+        _this = this;
       this.$container = $el;
       this.options = $.extend({}, this.settings, options);
       if (this.options.bindAddTo) {
@@ -80,10 +81,16 @@
         $item = $(el);
         if (_this.options.collectIdAttributes && $item.is('input')) {
           $item.appendTo($item.prev());
-          _this.$items = _this.$items.not($item);
+          return _this.$items = _this.$items.not($item);
+        } else {
+          return _this.bindDestroy($item);
         }
-        return _this.bindDestroy($item);
       });
+      _ref = this.$items;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        this.hideIfAlreadyDestroyed($(item));
+      }
       if (this.options.removeOnLoadIf) {
         this.$items.each(function(i, el) {
           $el = $(el);
@@ -182,16 +189,27 @@
       return $item;
     };
 
+    NestedAttributes.prototype.hideIfAlreadyDestroyed = function($item) {
+      var $destroyField;
+      $destroyField = $item.find("[name$='[_destroy]']");
+      if ($destroyField.length && $destroyField.val() === "true") {
+        return this.destroy($item);
+      }
+    };
+
     NestedAttributes.prototype.destroyClick = function(event) {
-      var $destroyField, $el, $item, attributePosition, destroyFieldName, index, itemIsNew, otherFieldName;
+      event.preventDefault();
+      return this.destroy($(event.target).parentsUntil(this.$container.selector).last());
+    };
+
+    NestedAttributes.prototype.destroy = function($item) {
+      var $destroyField, attributePosition, destroyFieldName, index, itemIsNew, otherFieldName;
       if (!(this.$items.length - 1)) {
         this.$restorableClone = this.extractClone();
       }
       if (!(this.$items.filter(':visible').length - 1)) {
         this.addItem();
       }
-      $el = $(event.target);
-      $item = $el.parentsUntil(this.$container.selector).last();
       index = this.indexForItem($item);
       itemIsNew = $item.find('input[name$="\\[id\\]"]').length === 0;
       if (this.options.beforeDestroy) {
@@ -212,8 +230,7 @@
         this.options.afterDestroy.call($item, index, itemIsNew);
       }
       this.refreshItems();
-      this.resetIndexes();
-      return event.preventDefault();
+      return this.resetIndexes();
     };
 
     NestedAttributes.prototype.indexForItem = function($item) {
