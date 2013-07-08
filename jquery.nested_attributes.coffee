@@ -211,7 +211,7 @@ class NestedAttributes
   # is a new escalation, we simple delete the item
   destroyClick: (event) =>
     event.preventDefault()
-    @destroy $(event.target).parentsUntil(@$container.selector).last()
+    @destroy $(event.target).parentsUntil(@$container).last()
 
   destroy: ($item) ->
     # If you're about to delete the last one,
