@@ -35,6 +35,7 @@ class NestedAttributes
     bindAddTo: false            # Required
     removeOnLoadIf: false
     collectIdAttributes: true
+    beforeClone: false
     beforeAdd: false
     afterAdd: false
     beforeMove: false
@@ -122,8 +123,12 @@ class NestedAttributes
     event.preventDefault()
 
   addItem: ->
-    # Piece together an item
     newIndex = @$items.length
+
+    # Give user a chance to make changes before we clone
+    @options.beforeClone.call(undefined, newIndex) if (@options.beforeClone)
+
+    # Piece together an item
     $newClone = @applyIndexToItem(@extractClone(), newIndex)
 
     # Give the user a chance to make their own changes before we insert
