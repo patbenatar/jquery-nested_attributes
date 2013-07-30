@@ -2,11 +2,7 @@
 
 jQuery plugin that makes it easy to dynamically add and remove records when using ActiveRecord's nested attributes.
 
-## Installation
-
-This will one day be a gem so it's nice and simple to install and manage updates for. Until that day, this is how you install:
-
-### Rails 3.1+ asset pipeline
+## Installation w/ Rails asset pipeline
 
 1. Download your flavor of jquery.nested_attributes (JS or Coffee)
 2. Add it to vendor/assets/javascripts
@@ -55,7 +51,8 @@ $("#container").nestedAttributes({
   beforeDestroy: false,          // Function. Callback before destroying an item
   afterDestroy: false,           // Function. Callback after destroying an item
   destroySelector: '.destroy',   // Pass in a custom selector of an element in each item that will destroy that item when clicked
-  deepClone: true                // Do you want jQuery to deep clone the element? Deep clones preserve events. Undesirable when using BackBone views for each element.
+  deepClone: true,               // Do you want jQuery to deep clone the element? Deep clones preserve events. Undesirable when using BackBone views for each element.
+  $clone: null                   // Pass in a clean element to be used when adding new items. Useful when using plugins like jQuery UI Datepicker or Select2. Use in conjunction with `afterAdd`.
 }
 ```
 
