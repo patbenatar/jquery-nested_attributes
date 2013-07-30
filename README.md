@@ -72,3 +72,14 @@ newly added element after its been inserted into the DOM.
 ```javascript
 $('#container').nestedAttributes("add" [, callback($element)]);
 ```
+
+## Credits
+
+### Contributors
+
+* [Brendan Loudermilk](http://github.com/bloudermilk)
+* [Nick Giancola](http://github.com/patbenatar)
+
+### Sponsor
+
+[![philosophie](http://patbenatar.github.io/showoff/images/philosophie.png)](http://gophilosophie.com)

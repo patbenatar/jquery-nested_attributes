@@ -1,5 +1,7 @@
-# Author: Nick Giancola (@patbenatar)
-# Homepage: https://github.com/patbenatar/jquery-nested_attributes
+###
+Authors: Nick Giancola (@patbenatar), Brendan Loudermilk (@bloudermilk)
+Homepage: https://github.com/patbenatar/jquery-nested_attributes
+###
 $ = jQuery
 
 methods =
