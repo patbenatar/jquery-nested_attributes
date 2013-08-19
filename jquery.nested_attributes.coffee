@@ -129,7 +129,10 @@ class NestedAttributes
     $newClone = @applyIndexToItem(@extractClone(), newIndex)
 
     # Give the user a chance to make their own changes before we insert
-    @options.beforeAdd.call(undefined, $newClone, newIndex) if (@options.beforeAdd)
+    if (@options.beforeAdd)
+
+      # Stop the add process if the callback returns false
+      return false if !@options.beforeAdd.call(undefined, $newClone, newIndex)
 
     # Insert the new item after the last item
     @$container.append($newClone)
@@ -226,7 +229,10 @@ class NestedAttributes
     index = @indexForItem($item)
     itemIsNew = $item.find('input[name$="\\[id\\]"]').length == 0
 
-    @options.beforeDestroy.call(undefined, $item, index, itemIsNew) if (@options.beforeDestroy)
+    if (@options.beforeDestroy)
+
+      # Stop the destroy process if the callback returns false
+      return false if !@options.beforeDestroy.call(undefined, $item, index, itemIsNew)
 
     if itemIsNew
 
