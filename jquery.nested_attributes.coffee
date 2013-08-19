@@ -245,12 +245,15 @@ class NestedAttributes
       $item.hide()
 
       # Add the _destroy field
-      # TODO: Only add if doesn't already exist
       otherFieldName = $item.find(':input[name]:first').attr('name')
       attributePosition = otherFieldName.lastIndexOf('[')
       destroyFieldName = "#{otherFieldName.substring(0, attributePosition)}[_destroy]"
-      $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
-      $item.append($destroyField)
+      # First look for an existing _destroy field
+      $destroyField = $item.find("input[name='#{destroyFieldName}']")
+      # If it doesn't exist, create it
+      if !$destroyField
+        $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
+        $item.append($destroyField)
       $destroyField.val(true).change()
 
     @options.afterDestroy.call($item, index, itemIsNew) if (@options.afterDestroy)
