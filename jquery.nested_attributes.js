@@ -232,7 +232,7 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
         attributePosition = otherFieldName.lastIndexOf('[');
         destroyFieldName = "" + (otherFieldName.substring(0, attributePosition)) + "[_destroy]";
         $destroyField = $item.find("input[name='" + destroyFieldName + "']");
-        if (!$destroyField) {
+        if ($destroyField.length === 0) {
           $destroyField = $("<input type=\"hidden\" name=\"" + destroyFieldName + "\" />");
           $item.append($destroyField);
         }

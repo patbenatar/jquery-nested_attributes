@@ -251,7 +251,7 @@ class NestedAttributes
       # First look for an existing _destroy field
       $destroyField = $item.find("input[name='#{destroyFieldName}']")
       # If it doesn't exist, create it
-      if !$destroyField
+      if $destroyField.length == 0
         $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
         $item.append($destroyField)
       $destroyField.val(true).change()
