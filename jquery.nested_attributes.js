@@ -214,15 +214,15 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
       if (!(this.$items.length - 1)) {
         this.$restorableClone = this.extractClone();
       }
-      if (!(this.$items.filter(':visible').length - 1)) {
-        this.addItem();
-      }
       index = this.indexForItem($item);
       itemIsNew = $item.find('input[name$="\\[id\\]"]').length === 0;
       if (this.options.beforeDestroy) {
         if (!this.options.beforeDestroy.call(void 0, $item, index, itemIsNew)) {
           return false;
         }
+      }
+      if (!(this.$items.filter(':visible').length - 1)) {
+        this.addItem();
       }
       if (itemIsNew) {
         $item.remove();
@@ -231,8 +231,11 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
         otherFieldName = $item.find(':input[name]:first').attr('name');
         attributePosition = otherFieldName.lastIndexOf('[');
         destroyFieldName = "" + (otherFieldName.substring(0, attributePosition)) + "[_destroy]";
-        $destroyField = $("<input type=\"hidden\" name=\"" + destroyFieldName + "\" />");
-        $item.append($destroyField);
+        $destroyField = $item.find("input[name='" + destroyFieldName + "']");
+        if ($destroyField.length === 0) {
+          $destroyField = $("<input type=\"hidden\" name=\"" + destroyFieldName + "\" />");
+          $item.append($destroyField);
+        }
         $destroyField.val(true).change();
       }
       if (this.options.afterDestroy) {
