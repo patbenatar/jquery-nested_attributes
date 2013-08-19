@@ -223,8 +223,6 @@ class NestedAttributes
     # cache a clone of it first so we have something to show
     # the next time user hits add
     @$restorableClone = @extractClone() unless @$items.length-1
-    # Add a blank item row if none are visible after this deletion
-    @addItem() unless @$items.filter(':visible').length-1
 
     index = @indexForItem($item)
     itemIsNew = $item.find('input[name$="\\[id\\]"]').length == 0
@@ -233,6 +231,9 @@ class NestedAttributes
 
       # Stop the destroy process if the callback returns false
       return false if !@options.beforeDestroy.call(undefined, $item, index, itemIsNew)
+
+    # Add a blank item row if none are visible after this deletion
+    @addItem() unless @$items.filter(':visible').length-1
 
     if itemIsNew
 
@@ -244,12 +245,15 @@ class NestedAttributes
       $item.hide()
 
       # Add the _destroy field
-      # TODO: Only add if doesn't already exist
       otherFieldName = $item.find(':input[name]:first').attr('name')
       attributePosition = otherFieldName.lastIndexOf('[')
       destroyFieldName = "#{otherFieldName.substring(0, attributePosition)}[_destroy]"
-      $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
-      $item.append($destroyField)
+      # First look for an existing _destroy field
+      $destroyField = $item.find("input[name='#{destroyFieldName}']")
+      # If it doesn't exist, create it
+      if $destroyField.length == 0
+        $destroyField = $("<input type=\"hidden\" name=\"#{destroyFieldName}\" />")
+        $item.append($destroyField)
       $destroyField.val(true).change()
 
     @options.afterDestroy.call($item, index, itemIsNew) if (@options.afterDestroy)
