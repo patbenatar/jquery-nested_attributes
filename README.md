@@ -52,7 +52,8 @@ $("#container").nestedAttributes({
   afterDestroy: false,           // Function. Callback after destroying an item
   destroySelector: '.destroy',   // Pass in a custom selector of an element in each item that will destroy that item when clicked
   deepClone: true,               // Do you want jQuery to deep clone the element? Deep clones preserve events. Undesirable when using BackBone views for each element.
-  $clone: null                   // Pass in a clean element to be used when adding new items. Useful when using plugins like jQuery UI Datepicker or Select2. Use in conjunction with `afterAdd`.
+  $clone: null,                  // Pass in a clean element to be used when adding new items. Useful when using plugins like jQuery UI Datepicker or Select2. Use in conjunction with `afterAdd`.
+  preserveInputValues: false     // Do not clear form input values of the cloned element
 }
 ```
 
