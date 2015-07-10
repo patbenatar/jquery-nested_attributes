@@ -4,6 +4,26 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
 ###
 $ = jQuery
 
+# jQuery selector for text-like inputs such as text or email
+# Based on Mark Dalgleish and Thalimenel's sample code at http://markdalgleish.com/2011/05/jquery-selector-for-html5-input-types/
+textInputTypes =
+  text: true
+  search: true
+  number: true
+  email: true
+  datetime: true
+  'datetime-local': true
+  date: true
+  month: true
+  week: true
+  time: true
+  tel: true
+  url: true
+  color: true
+  range: true
+$.expr[':'].textall = (elem) ->
+  !!textInputTypes[elem.getAttribute('type')]
+
 methods =
   init: (options) ->
     $el = $(@)
@@ -161,7 +181,7 @@ class NestedAttributes
       @bindDestroy($record) if @options.$clone or !@options.deepClone
 
       # Empty out the values of text inputs and selects
-      $record.find(':text, textarea, select').val('')
+      $record.find('input:textall, input[type=file], textarea, select').val('')
 
       # Reset checkboxes and radios
       $record.find(':checkbox, :radio').attr("checked", false)

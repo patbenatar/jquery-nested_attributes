@@ -11,6 +11,29 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
 
   $ = jQuery;
 
+  var textInputTypes;
+
+  textInputTypes = {
+    text: true,
+    search: true,
+    number: true,
+    email: true,
+    datetime: true,
+    'datetime-local': true,
+    date: true,
+    month: true,
+    week: true,
+    time: true,
+    tel: true,
+    url: true,
+    color: true,
+    range: true
+  };
+
+  $.expr[':'].textall = function(elem) {
+    return !!textInputTypes[elem.getAttribute('type')];
+  };
+
   methods = {
     init: function(options) {
       var $el, instance;
@@ -152,7 +175,7 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
         if (this.options.$clone || !this.options.deepClone) {
           this.bindDestroy($record);
         }
-        $record.find(':text, textarea, select').val('');
+        $record.find('input:textall, input[type=file], textarea, select').val('')
         $record.find(':checkbox, :radio').attr("checked", false);
         $record.find('input[name$="\\[id\\]"]').remove();
         $record.find('input[name$="\\[_destroy\\]"]').remove();
