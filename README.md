@@ -88,6 +88,7 @@ $('#container').nestedAttributes("add" [, callback($element)]);
 * [Brendan Loudermilk](https://github.com/bloudermilk)
 * [Nick Giancola](https://github.com/patbenatar)
 * [Alec Winograd](https://github.com/awinograd)
+* [lulalala](https://github.com/lulalala)
 
 ### Sponsor
 
