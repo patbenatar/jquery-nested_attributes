@@ -92,4 +92,4 @@ $('#container').nestedAttributes("add" [, callback($element)]);
 
 ### Sponsor
 
-[![philosophie](http://patbenatar.github.io/showoff/images/philosophie.png)](http://gophilosophie.com)
+[![philosophie](http://patbenatar.github.io/showoff/images/philosophie.png)](http://philosophie.is)
