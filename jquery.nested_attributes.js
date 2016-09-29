@@ -305,7 +305,7 @@ Homepage: https://github.com/patbenatar/jquery-nested_attributes
     };
 
     NestedAttributes.prototype.itemCount = function(){
-      return $(this).children.length;
+      return this.$items.filter(':visible').length;
     };
 
     return NestedAttributes;
