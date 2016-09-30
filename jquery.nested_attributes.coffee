@@ -311,3 +311,6 @@ class NestedAttributes
 
   bindDestroy: ($item) ->
     $item.find(@options.destroySelector).click(@destroyClick) if (@options.destroySelector)
+
+  itemCount: ->
+    @$items.filter(':visible').length
