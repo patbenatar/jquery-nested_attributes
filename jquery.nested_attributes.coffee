@@ -276,7 +276,7 @@ class NestedAttributes
         $item.append($destroyField)
       $destroyField.val(true).change()
 
-    @options.afterDestroy.call($item, index, itemIsNew) if (@options.afterDestroy)
+    @options.afterDestroy.call($item, $item, index, itemIsNew) if (@options.afterDestroy)
 
     # Remove this item from the items list
     @refreshItems()
